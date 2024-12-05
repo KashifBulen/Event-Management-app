@@ -1,0 +1,3399 @@
+openapi: 3.0.1
+info:
+  title: Mtrrs
+  version: 2.0.0
+  description: |
+    Social Media Platform
+servers:
+  - url: https://52.214.176.110/api
+
+    description: Live server
+tags:
+  - name: Authentication
+    description: APIs for user authentication
+  - name: User
+    description: APIs for user authentication
+paths:
+  /login:
+    post:
+      operationId: login
+      summary: User Login
+      description: Login with email and password to obtain a token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: User email
+                idToken:
+                  type: string
+                  description: User Id token
+                deviceToken:
+                  type: string
+                  description: User device token
+      responses:
+        "200":
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/LoginResponse"
+                  - $ref: "#/components/schemas/VerificationResponse"
+  /googleAuth:
+    post:
+      operationId: googleAuth
+      summary: Google Authentication
+      description: Authenticate with Google using access token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idToken:
+                  type: string
+                  description: Google id token
+                deviceToken:
+                  type: string
+                  description: User device token
+      responses:
+        "200":
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ
+                  id:
+                    type: string
+                    example: "1234567890"
+                  firstName:
+                    type: string
+                    example: John
+                  lastName:
+                    type: string
+                    example: Doe
+                  email:
+                    type: string
+                    example: john.doe@example.com
+                  phone:
+                    type: string
+                    example: +92312627****
+                  isExisting:
+                    type: boolean
+                    example: true
+  /signup:
+    post:
+      operationId: signup
+      summary: Add a new user
+      description: Add a new user with first name, last name, email, phone, and password
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: User's email
+                idToken:
+                  type: string
+                  description: User's email
+                password:
+                  type: string
+                  description: User's Password
+                deviceToken:
+                  type: string
+                  description: User's device token for push notifications
+      responses:
+        "200":
+          description: User added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  token:
+                    type: string
+                  email:
+                    type: string
+                    example: john.doe@example.com
+
+  /verifyEmail:
+    post:
+      operationId: verifyEmail
+      summary: Verify User Email
+      description: Verify user's email using OTP and user ID
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                otp:
+                  type: string
+                  description: OTP sent to user's email
+                userId:
+                  type: string
+                  description: User Id
+      responses:
+        "200":
+          description: Email verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "1234567890"
+                  email:
+                    type: string
+                    example: john.doe@example.com
+  /getAuthToken:
+    post:
+        operationId: getAuthToken
+        summary: Get Auth Token
+        description: Get Auth Token
+        tags:
+          - Authentication
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                    description: User Id
+                  idToken:
+                    type: string
+                    description: Id Token of User
+        responses:
+          "200":
+            description: Email verified successfully
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    token:
+                      type: string
+                      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ
+                    id:
+                      type: string
+                      example: "1234567890"
+                    email:
+                      type: string
+                      example: john.doe@example.com
+  /resetPassword:
+    post:
+      operationId: resetPassword
+      summary: Reset User Password
+      description: Reset User Password Using
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: users password
+                email:
+                  type: string
+                  description: users email
+                otp:
+                  type: string
+                  description: OTP code sent on user email
+      responses:
+        "200":
+          description: Email verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+  /forgetPassword:
+    post:
+      operationId: forgetPassword
+      summary: Reset Forget Password
+      description: Forget User Password Using
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: users email
+      responses:
+        "200":
+          description: Email Sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+  /resendOtp:
+    post:
+      operationId: resendOtp
+      summary: Resend OTP to user
+      description: Resend Otp incase he didn't receive the email
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: User's email
+      responses:
+        "200":
+          description: Email verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+  /logout:
+    post:
+      operationId: logout
+      summary: Logout
+      description: Logout
+      tags:
+        - Authentication
+      security:
+        - firebaseAuth: []
+      responses:
+        "200":
+          description: Logout
+          content:
+            application/json:
+              schema:
+                properties:
+                  msg:
+                    type: string
+  /user:
+    patch:
+      operationId: updateUser
+      summary: Update User Details
+      description: Update User Details
+      tags:
+        - User
+      security:
+        - firebaseAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: OTP sent to user's email
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                dateOfBirth:
+                  type: string
+                gender:
+                  type: string
+                photoUrl:
+                  type: string
+                about:
+                  type: string
+                xp:
+                  type: number
+                companyId:
+                  type: string
+                phone:
+                  type: string
+                allowPeopleToConnect:
+                  type: boolean
+                  default: false
+                pushAlerts:
+                  type: boolean
+                  default: false
+                hasCompleteProfile:
+                  type: boolean
+                  default: false
+                address:
+                  type: string
+                  default: null
+                profession:
+                  type: string
+                  default: null
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  default: []
+      responses:
+        "200":
+          description: Update User Details successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  firstName:
+                    type: string
+                    example: John
+                  lastName:
+                    type: string
+                    example: Doe
+                  email:
+                    type: string
+                    example: john.doe@example.com
+                  phone:
+                    type: string
+                    example: +9321****
+                  createdAt:
+                    type: string
+                    example: Date
+                  updatedAt:
+                    type: string
+                    example: Date
+                  userName:
+                    type: string
+                    example: john.doe
+                  gender:
+                    type: string
+                    example: male
+                  dateOfBirth:
+                    type: string
+                  photoUrl:
+                    type: string
+                  about:
+                    type: string
+                  xp:
+                    type: number
+                  companyId:
+                    type: string
+                  allowPeopleToConnect:
+                    type: boolean
+                    default: false
+                  pushAlerts:
+                    type: boolean
+                    default: false
+                  hasCompleteProfile:
+                    type: boolean
+                    default: false
+                  address:
+                    type: string
+                    default: null
+                  profession:
+                    type: string
+                    default: null
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                    default: []
+
+    get:
+      operationId: getUserDetails
+      summary: Get User Details
+      description: Get User Details
+      tags:
+        - User
+      security:
+        - firebaseAuth: []
+      responses:
+        "200":
+          description: Get user details successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  firstName:
+                    type: string
+                    example: John
+                  lastName:
+                    type: string
+                    example: Doe
+                  email:
+                    type: string
+                    example: john.doe@example.com
+                  phone:
+                    type: string
+                    example: +9321****
+                  createdAt:
+                    type: string
+                    example: Date
+                  updatedAt:
+                    type: string
+                    example: Date
+                  userName:
+                    type: string
+                    example: john.doe
+                  gender:
+                    type: string
+                    example: male
+                  dateOfBirth:
+                    type: string
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                    default: []
+  /switch-account:
+    post:
+      operationId: switchAccount
+      summary: switch user
+      description: switch user
+      tags:
+        - User
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: id
+          in: query
+          description: ID of company account to get details (optional)
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Update User Details successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  firstName:
+                    type: string
+                    example: John
+                  lastName:
+                    type: string
+                    example: Doe
+                  email:
+                    type: string
+                    example: john.doe@example.com
+                  phone:
+                    type: string
+                    example: +9321****
+                  createdAt:
+                    type: string
+                    example: Date
+                  updatedAt:
+                    type: string
+                    example: Date
+                  userName:
+                    type: string
+                    example: john.doe
+                  gender:
+                    type: string
+                    example: male
+                  dateOfBirth:
+                    type: string
+                  photoUrl:
+                    type: string
+                  about:
+                    type: string
+                  xp:
+                    type: number
+                  companyId:
+                    type: string
+                  allowPeopleToConnect:
+                    type: boolean
+                    default: false
+                  pushAlerts:
+                    type: boolean
+                    default: false
+                  address:
+                    type: string
+                    default: null
+                  profession:
+                    type: string
+                    default: null
+
+  /upload-image:
+    post:
+      operationId: uploadImage
+      summary: Get User Details
+      description: Get User Details
+      tags:
+        - Common
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+      responses:
+        "200":
+          description: Get user details successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  imageUrl:
+                    type: string
+                    example: https://mttrs-app/image/q23423423qweqweqw
+
+  /company:
+    post:
+      operationId: createCompany
+      summary: create company account
+      description: create company account
+      tags:
+        - Company
+      security:
+        - firebaseAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: id of user who created this company
+                creatorType:
+                  type: string
+                  description: createrType weather is creator or busiuness
+                name:
+                  type: string
+                  description: company name
+                email:
+                  type: string
+                  description: company email address
+                registeredNumber:
+                  type: string
+                  description: Company registration number
+                position:
+                  type: string
+                  description: Company position
+                phone:
+                  type: string
+                  description: Company phone number
+                bestDescribeYou:
+                  type: string
+                  description: Best Describe the Company
+                shortDescription:
+                  type: string
+                  description: Short Company description
+                country:
+                  type: string
+                  description: Company address detail
+                city:
+                  type: string
+                street:
+                  type: string
+                houseNumber:
+                  type: string
+                addition:
+                  type: string
+                postalCode:
+                  type: string
+                photoUrl:
+                  type: string
+                  description: Profile image url
+                followers:
+                  type: number
+                  description: Numbers of followers
+                events:
+                  type: number
+                  description: Numbers of events organize by this comapny
+                xp:
+                  type: number
+                  description: Numbers of xp (coupans) comapny have
+      responses:
+        "200":
+          description: Created company account successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  creatorType:
+                    type: string
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  registeredNumber:
+                    type: string
+                  position:
+                    type: string
+                  phone:
+                    type: string
+                  bestDescribeYou:
+                    type: string
+                  shortDescription:
+                    type: string
+                  country:
+                    type: string
+                  city:
+                    type: string
+                  street:
+                    type: string
+                  houseNumber:
+                    type: string
+                  addition:
+                    type: string
+                  postalCode:
+                    type: string
+                  photoUrl:
+                    type: string
+                  followers:
+                    type: number
+                  events:
+                    type: number
+                  xp:
+                    type: number
+    get:
+      operationId: getCompany
+      summary: get all company accounts
+      description: get all company accounts
+      tags:
+        - Company
+      security:
+        - firebaseAuth: []
+      responses:
+        "200":
+          description: Get company details successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    userId:
+                      type: string
+                    creatorType:
+                      type: string
+                    name:
+                      type: string
+                    email:
+                      type: string
+                    registeredNumber:
+                      type: string
+                    position:
+                      type: string
+                    phone:
+                      type: string
+                    bestDescribeYou:
+                      type: string
+                    shortDescription:
+                      type: string
+                    country:
+                      type: string
+                    city:
+                      type: string
+                    street:
+                      type: string
+                    houseNumber:
+                      type: string
+                    addition:
+                      type: string
+                    postalCode:
+                      type: string
+                    photoUrl:
+                      type: string
+                    followers:
+                      type: number
+                    events:
+                      type: number
+                    xp:
+                      type: number
+
+    patch:
+      operationId: updateCompany
+      summary: Update company account
+      description: Update an existing company account
+      tags:
+        - Company
+      security:
+        - firebaseAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: ID of the user who created this company
+                creatorType:
+                  type: string
+                  description: Creator type whether it's a creator or business
+                name:
+                  type: string
+                  description: Company name
+                email:
+                  type: string
+                  description: Company email address
+                registeredNumber:
+                  type: string
+                  description: Company registration number
+                position:
+                  type: string
+                  description: Company position
+                phone:
+                  type: string
+                  description: Company phone number
+                bestDescribeYou:
+                  type: string
+                  description: Best way to describe the company
+                shortDescription:
+                  type: string
+                  description: Short company description
+                country:
+                  type: string
+                  description: Company address details
+                city:
+                  type: string
+                street:
+                  type: string
+                houseNumber:
+                  type: string
+                addition:
+                  type: string
+                postalCode:
+                  type: string
+                photoUrl:
+                  type: string
+                  description: Profile image URL
+                followers:
+                  type: number
+                  description: Number of followers
+                events:
+                  type: number
+                  description: Number of events organized by this company
+                xp:
+                  type: number
+                  description: Number of XP (coupons) the company has
+      responses:
+        "200":
+          description: Company account updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  creatorType:
+                    type: string
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  registeredNumber:
+                    type: string
+                  position:
+                    type: string
+                  phone:
+                    type: string
+                  bestDescribeYou:
+                    type: string
+                  shortDescription:
+                    type: string
+                  country:
+                    type: string
+                  city:
+                    type: string
+                  street:
+                    type: string
+                  houseNumber:
+                    type: string
+                  addition:
+                    type: string
+                  postalCode:
+                    type: string
+                  photoUrl:
+                    type: string
+                  followers:
+                    type: number
+                  events:
+                    type: number
+                  xp:
+                    type: number
+
+  /company/{id}:
+    get:
+      operationId: getSingleCompany
+      summary: get Single Company
+      description: get Single Company
+      tags:
+        - Company
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of comapny to get details
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Company retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  creatorType:
+                    type: string
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  registeredNumber:
+                    type: string
+                  position:
+                    type: string
+                  phone:
+                    type: string
+                  bestDescribeYou:
+                    type: string
+                  shortDescription:
+                    type: string
+                  country:
+                    type: string
+                  city:
+                    type: string
+                  street:
+                    type: string
+                  houseNumber:
+                    type: string
+                  addition:
+                    type: string
+                  postalCode:
+                    type: string
+                  photoUrl:
+                    type: string
+                  followers:
+                    type: number
+                  events:
+                    type: number
+                  xp:
+                    type: number
+
+  /event:
+    post:
+      operationId: createEvent
+      summary: Create Event
+      description: Create Event
+      tags:
+        - Event
+      security:
+        - firebaseAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                stepNumber:
+                  type: string
+                eventId:
+                  type: string
+                eventIdentifier:
+                  type: number
+                eventTitle:
+                  type: string
+                  description: Event title
+                eventSummary:
+                  type: string
+                  description: Event summary
+                eventDescription:
+                  type: string
+                  description: Event Description number
+                eventPhoto:
+                  type: array
+                  items:
+                    type: string
+                  description: Event photo urls
+                themeId:
+                  type: string
+                  description: Theme id used for this event
+                tag:
+                  type: array
+                  items:
+                    type: string
+                  description: Tags used for this event
+                eventTypeId:
+                  type: string
+                  description: Event type id
+                eventTypeData:
+                  type: object
+                  properties:
+                    locations:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          location:
+                            type: object
+                            properties:
+                              coordinates:
+                                type: array
+                                items:
+                                  type: number
+                      description: Event location
+                    easyTypeValue:
+                      type: object
+                      properties:
+                        easyEventId:
+                          type: string
+                        host:
+                          type: string
+                        link:
+                          type: string
+                        hostId:
+                          type: string
+                      description: Event easy type value
+                    shop:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          productReference:
+                            type: string
+                          productId:
+                            type: string
+                          productOrderHook:
+                            type: string
+                    donation:
+                      type: object
+                      properties:
+                        requiredDonationAmount:
+                          type: string
+                          description: Donation amount
+                        bankName:
+                          type: string
+                          description: Name of bank
+                        accountTitle:
+                          type: string
+                          description: Account title
+                        address:
+                          type: string
+                        anbiStatus:
+                          type: boolean
+                          default: false
+                  description: Event type data
+                eventMilestoneList:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      milestoneId:
+                        type: string
+                        description: Milestone id
+                      milestoneValue:
+                        type: string
+                        description: Milestone value
+                      milestoneData:
+                        type: array
+                        items:
+                          type: object
+                      xp:
+                        type: number
+                        description: Number of XP for this milestone
+                xp:
+                  type: number
+                  description: Number of XP for this event
+                eventLink:
+                  type: string
+      responses:
+        "200":
+          description: Created event successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventId:
+                    type: string
+                  eventIdentifier:
+                    type: number
+                  companyId:
+                    type: string
+                  eventTitle:
+                    type: string
+                  eventSummary:
+                    type: string
+                  eventDescription:
+                    type: string
+                  eventPhoto:
+                    type: array
+                    items:
+                      type: string
+                  themeId:
+                    type: string
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  eventTypeId:
+                    type: string
+                  eventTypeData:
+                    type: object
+                    properties:
+                      locations:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            location:
+                              type: object
+                              properties:
+                                coordinates:
+                                  type: array
+                                  items:
+                                    type: number
+                      easyTypeValue:
+                        type: object
+                        properties:
+                          easyEventId:
+                            type: string
+                          host:
+                            type: string
+                          link:
+                            type: string
+                          hostId:
+                            type: string
+                      shop:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            productReferance:
+                              type: string
+                            productId:
+                              type: string
+                            productOrderHook:
+                              type: string
+                      donation:
+                        type: object
+                        properties:
+                          requiredDonationAmount:
+                            type: string
+                          bankName:
+                            type: string
+                          accountTitle:
+                            type: string
+                          address:
+                            type: string
+                          anbiStatus:
+                            type: boolean
+                            default: false
+                  eventMilestoneList:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        milestoneId:
+                          type: string
+                        milestoneValue:
+                          type: string
+                        milestoneData:
+                          type: array
+                          items:
+                            type: object
+                        xp:
+                          type: number
+                  xp:
+                    type: number
+                    description: Number of XP for this event
+                  eventLink:
+                    type: string
+
+    get:
+      operationId: getAllEvents
+      summary: Get all events
+      description: Get details of all events
+      tags:
+        - Event
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: currentPage
+          in: query
+          description: Current offset
+          required: false
+          schema:
+            type: number
+            default: 1
+        - name: startDate
+          in: query
+          description: Start Date
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: endDate
+          in: query
+          description: End Date
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: eventType
+          in: query
+          description: eventType
+          required: false
+          schema:
+            type: array
+            items:
+               type: string
+            default: ""
+        - name: tags
+          in: query
+          description: Tags 
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              
+        - name: lat
+          in: query
+          description: eventType
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: lng
+          in: query
+          description: eventType
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: now
+          in: query
+          description: Flag indicating whether to consider the current time
+          required: false
+          schema:
+            type: boolean
+            
+        - name: search
+          in: query
+          description: Search query
+          required: false
+          schema:
+            type: string
+            
+        - name: $text
+          in: query
+          description: Text search
+          required: false
+          schema:
+            type: object
+            properties:
+              $search:
+                type: string
+      responses:
+        "200":
+          description: Events retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hasNextPage:
+                    type: boolean
+                  events:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        eventIdentifier:
+                          type: number
+                        companyId:
+                          type: string
+                        eventTitle:
+                          type: string
+                        eventSummary:
+                          type: string
+                        eventDescription:
+                          type: string
+                        eventPhoto:
+                          type: array
+                          items:
+                            type: string
+                        themeId:
+                          type: string
+                        tag:
+                          type: array
+                          items:
+                            type: string
+                        eventTypeId:
+                          type: string
+                        eventTypeData:
+                          type: object
+                          properties:
+                            locations:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  address:
+                                    type: string
+                                  location:
+                                    type: object
+                                    properties:
+                                      coordinates:
+                                        type: array
+                                        items:
+                                          type: number
+                            easyTypeValue:
+                              type: object
+                              properties:
+                                host:
+                                  type: string
+                                link:
+                                  type: string
+                                hostId:
+                                  type: string
+                            shop:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  productReferance:
+                                    type: string
+                                  productId:
+                                    type: string
+                                  productOrderHook:
+                                    type: string
+                            donation:
+                              type: object
+                              properties:
+                                requiredDonationAmount:
+                                  type: string
+                                bankName:
+                                  type: string
+                                accountTitle:
+                                  type: string
+                                address:
+                                  type: string
+                                anbiStatus:
+                                  type: boolean
+                                  default: false
+                        eventMilestoneList:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              milestoneId:
+                                type: string
+                              milestoneValue:
+                                type: string
+                              milestoneData:
+                                type: array
+                                items:
+                                  type: object
+                              xp:
+                                type: number
+                        xp:
+                          type: number
+                          description: Number of XP for this event
+                        isDraft:
+                          type: boolean
+                        eventLink:
+                          type: string
+  /event/joinhistory:
+    get:
+      operationId: eventJoinHistory
+      summary: Event Join History
+      description: Event Join History
+      tags:
+        - Event
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: friendId
+          in: query
+          description: friendId
+          required: false
+          schema:
+            type: string
+            default: null
+      responses:
+          "200":
+            description: Get event history 
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    type: object
+  /event/completed:
+    post:
+      operationId: eventCompleted
+      summary: Event Completed
+      description: Event Completed
+      tags:
+        - Event
+      security:
+        - firebaseAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventId:
+                  type: string
+        
+      responses:
+          "200":
+            description: User XP updated successfully
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    xp:
+                      type: number
+
+          
+  /event/{id}:
+    get:
+      operationId: getSingleEvent
+      summary: Get single event
+      description: Get details of single event
+      tags:
+        - Event
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of event to get details
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Event retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventIdentifier:
+                    type: number
+                  companyId:
+                    type: string
+                  eventTitle:
+                    type: string
+                  eventSummary:
+                    type: string
+                  eventDescription:
+                    type: string
+                  eventPhoto:
+                    type: array
+                    items:
+                      type: string
+                  themeId:
+                    type: string
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  eventTypeId:
+                    type: string
+                  eventTypeData:
+                    type: object
+                    properties:
+                      locationValue:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            lat:
+                              type: number
+                            lng:
+                              type: number
+                      easyTypeValue:
+                        type: object
+                        properties:
+                          host:
+                            type: string
+                          link:
+                            type: string
+                          hostId:
+                            type: string
+                      shop:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            productReferance:
+                              type: string
+                            productId:
+                              type: string
+                            productOrderHook:
+                              type: string
+                      donation:
+                        type: object
+                        properties:
+                          requiredDonationAmount:
+                            type: string
+                          bankName:
+                            type: string
+                          accountTitle:
+                            type: string
+                          address:
+                            type: string
+                          anbiStatus:
+                            type: boolean
+                            default: false
+                  eventMilestoneList:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        milestoneId:
+                          type: string
+                        milestoneValue:
+                          type: string
+                        milestoneData:
+                          type: array
+                          items:
+                            type: object
+                        xp:
+                          type: number
+                  xp:
+                    type: number
+                    description: Number of XP for this event
+                  isDraft:
+                    type: boolean
+                  eventLink:
+                    type: string
+
+    delete:
+      operationId: deleteEvent
+      summary: Delete Events
+      description: Delete a Event by ID
+      tags:
+        - Event
+      parameters:
+        - name: id
+          in: path
+          description: ID of event to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Event deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /event/company-events:
+    get:
+      operationId: getEventsByCompanyId
+      summary: Get events by company ID
+      tags:
+        - Event
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: isDraft
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: currentPage
+          in: query
+          description: Current offset
+          required: false
+          schema:
+            type: number
+            default: 1
+      responses:
+        "200":
+          description: Events retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hasNextPage:
+                    type: boolean
+                  events:
+                    items:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          eventIdentifier:
+                            type: number
+                          companyId:
+                            type: string
+                          eventTitle:
+                            type: string
+                          eventSummary:
+                            type: string
+                          eventDescription:
+                            type: string
+                          eventPhoto:
+                            type: array
+                            items:
+                              type: string
+                          themeId:
+                            type: string
+                          tag:
+                            type: array
+                            items:
+                              type: string
+                          eventTypeId:
+                            type: string
+                          eventTypeData:
+                            type: object
+                            properties:
+                              locationValue:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    address:
+                                      type: string
+                                    lat:
+                                      type: number
+                                    lng:
+                                      type: number
+                              easyTypeValue:
+                                type: object
+                                properties:
+                                  host:
+                                    type: string
+                                  link:
+                                    type: string
+                                  hostId:
+                                    type: string
+                              shop:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    productReferance:
+                                      type: string
+                                    productId:
+                                      type: string
+                                    productOrderHook:
+                                      type: string
+                              donation:
+                                type: object
+                                properties:
+                                  requiredDonationAmount:
+                                    type: string
+                                  bankName:
+                                    type: string
+                                  accountTitle:
+                                    type: string
+                                  address:
+                                    type: string
+                                  anbiStatus:
+                                    type: boolean
+                                    default: false
+                          eventMilestoneList:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                milestoneId:
+                                  type: string
+                                milestoneValue:
+                                  type: string
+                                milestoneData:
+                                  type: array
+                                  items:
+                                    type: object
+                                xp:
+                                  type: number
+                          xp:
+                            type: number
+                            description: Number of XP for this event
+                          isDraft:
+                            type: boolean
+                          eventLink:
+                            type: string
+
+  /event/{eventId}/user-reviews:
+    get:
+      operationId: getEventReviews
+      summary: Get reviews given by users
+      tags:
+        - Event
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event
+          required: true
+          schema:
+            type: string
+        - name: currentPage
+          in: query
+          description: Current offset
+          required: false
+          schema:
+            type: number
+            default: 1
+      responses:
+        "200":
+          description: Events reviews retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hasNextPage:
+                    type: boolean
+                  reviews:
+                    items:
+                      type: array
+                      items:
+                        type: object
+
+  /event/{eventId}/is-joined/{userId}:
+    get:
+      operationId: checkEventJoined
+      summary: Check if already join this event
+      description: Check if already join this event
+      tags:
+        - EventJoin
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          description: ID of user who wants to join
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Event joined already
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  joined:
+                    example: yes or no
+                    type: string
+
+  /event/{eventId}/join/{userId}:
+    post:
+      operationId: joinEvent
+      summary: Join this event
+      description: Join this event
+      tags:
+        - EventJoin
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          description: ID of user who wants to join
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Event joined successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /event/{eventId}/invite:
+    get:
+      operationId: getAllEventInvites
+      summary: Get all event invites
+      description: Get all event invites
+      tags:
+        - EventJoin
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: currentPage
+          in: query
+          description: get event invitees with pagination
+          required: false
+          schema:
+            type: number
+
+      responses:
+        "200":
+          description: Invitees retrieved successfully
+          content:
+            application/json:
+              schema:
+                items:
+                  type: object
+
+  /event/my-friends-join:
+    get:
+      operationId: getEventJoinByFriends
+      summary: Get all events join by my friends
+      description: Get all events join by my friends
+      tags:
+        - EventJoin
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: currentPage
+          in: query
+          description: get event join with pagination
+          required: false
+          schema:
+            type: number
+
+      responses:
+        "200":
+          description: Events joined by friends retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /event/{eventId}/invite/{senderId}/{receiverId}/{milestoneId}:
+    post:
+      operationId: inviteFriendEventJoin
+      summary: Send invitation to friend to join this event
+      description: Send invitation to friend to join this event
+      tags:
+        - EventJoin
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event
+          required: true
+          schema:
+            type: string
+        - name: senderId
+          in: path
+          description: Invitation sender
+          required: true
+          schema:
+            type: string
+        - name: receiverId
+          in: path
+          description: Invitation receiver
+          required: true
+          schema:
+            type: string
+        - name: milestoneId
+          in: path
+          description: Milestone id
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Invitation send successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /event/{eventId}/invite/{inviteId}/accept-reject/{status}:
+    post:
+      operationId: inviteEventAcceptReject
+      summary: Accept or reject event join invitation
+      description: Accept or reject event join invitation
+      tags:
+        - EventJoin
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event
+          required: true
+          schema:
+            type: string
+        - name: inviteId
+          in: path
+          description: Invitation id
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: path
+          description: accept or reject
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Invitation accept or reject successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /event/{eventId}/milestone-completed:
+    get:
+      operationId: getEventMilestonesCompleted
+      summary: Get list of milestones completed for this event for logged user
+      description: Get list of milestones completed for this event for logged user
+      tags:
+        - EventMilestone
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Completed milestones retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+  /event/{eventId}/milestone-complete/{milestoneId}:
+    post:
+      operationId: completeMilestoneInviteFriend
+      summary: Complete milestone
+      description: Complete milestone
+      tags:
+        - EventMilestone
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event
+          required: true
+          schema:
+            type: string
+        - name: milestoneId
+          in: path
+          description: Milestone id
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Milestone completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /event/{eventId}/milestone-skip/{milestoneId}:
+    post:
+      operationId: skipMilestoneInviteFriend
+      summary: Skip milestone
+      description: Skip milestone
+      tags:
+        - EventMilestone
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event
+          required: true
+          schema:
+            type: string
+        - name: milestoneId
+          in: path
+          description: Milestone id
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Milestone skipped successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /event/{eventId}/milestone-datetime-complete/{milestoneId}:
+    post:
+      operationId: completeMilestoneDateTime
+      summary: Complete datetime milestone
+      description: Complete datetime milestone
+      tags:
+        - EventMilestone
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event
+          required: true
+          schema:
+            type: string
+        - name: milestoneId
+          in: path
+          description: Milestone id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+               notificationTime:
+                type: object
+
+      responses:
+        "200":
+          description: Milestone datetime completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Milestone datetime completed successfully"
+
+  /event/{eventId}/milestone-checkin/{milestoneId}:
+    post:
+      operationId: checkInEvent
+      summary: User will manually checkin when he/she reach at event at location
+      description: User will manually checkin when he/she reach at event location
+      tags:
+        - EventMilestone
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event
+          required: true
+          schema:
+            type: string
+        - name: milestoneId
+          in: path
+          description: Milestone id
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: User checkedin successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User checkedin successfully"
+  /event/{eventId}/milestone-make-photo/{milestoneId}:
+    post:
+      operationId: completeMilestoneMakePhoto
+      summary: Complete make photo milestone
+      description: Complete make photo milestone
+      tags:
+        - EventMilestone
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event
+          required: true
+          schema:
+            type: string
+        - name: milestoneId
+          in: path
+          description: Milestone id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: string
+                  description: Photo url
+
+      responses:
+        "200":
+          description: Make photo milestone completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Make photo milestone completed successfully"
+  /event/{eventId}/milestone-review/{milestoneId}:
+    post:
+      operationId: completeMilestoneReview
+      summary: Complete review milestone
+      description: Complete review milestone
+      tags:
+        - EventMilestone
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: ID of event
+          required: true
+          schema:
+            type: string
+        - name: milestoneId
+          in: path
+          description: Milestone id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rating:
+                  type: string
+                  description: Rating given
+                review:
+                  type: string
+                  description: Review text
+
+      responses:
+        "200":
+          description: Review milestone completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Review milestone completed successfully"
+  /comment/{eventId}:
+    post:
+      operationId: createComment
+      summary: Create a new comment
+      tags:
+        - Comment
+      security:
+        - firebaseAuth: []
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  eventId:
+                    type: string
+                  text:
+                    type: string
+    get:
+      operationId: getAllComments
+      summary: Get All comments
+      description: Get All comments
+      tags:
+        - Comment
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+        - name: pageNo
+          in: query
+          description: get comments with pagination
+          required: false
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Comments retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /like-event/{eventId}:
+    post:
+      operationId: addNewLike
+      summary: Add a new like to event
+      tags:
+        - Like
+      security:
+        - firebaseAuth: []
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  eventId:
+                    type: string
+
+  /favorite-event/{eventId}:
+    post:
+      operationId: addNewFavoriteEvent
+      summary: Add event to favorite event list
+      tags:
+        - Favorite
+      security:
+        - firebaseAuth: []
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Added to favorites successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  eventId:
+                    type: string
+
+  # ----super admin api doc
+  /milestone:
+    post:
+      operationId: createMilestone
+      summary: create Milestone by super admin
+      description: create Milestone by super admin
+      tags:
+        - Milestone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                milestoneName:
+                  type: string
+                  description: Milestone name
+                photoUrl:
+                  type: string
+                  description: photo url of milestone
+                xp:
+                  type: number
+                  description: Xp for milestone
+                completionTiming:
+                  type: number
+                  description: completion timing for this milestone
+                hasModal:
+                  type: boolean
+                  default: false
+                eventTypeIds:
+                  type: array  
+                  items:
+                    type: string  
+                  default: null
+      responses:
+        "200":
+          description: Created company account successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  milestoneName:
+                    type: string
+                  photoUrl:
+                    type: string
+                  xp:
+                    type: number
+                  completionTiming:
+                    type: number
+
+    get:
+      operationId: getAllMilestones
+      summary: Get All Milestones
+      description: Get details of all milestones
+      tags:
+        - Milestone
+      parameters:
+        - name: eventTypeId
+          in: query
+          description: eventTypeId
+          required: false
+          schema:
+            type: string
+            default: ""  
+      responses:
+        "200":
+          description: Milestones retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    milestoneName:
+                      type: string
+                    photoUrl:
+                      type: string
+                    xp:
+                      type: number
+                    completionTiming:
+                      type: number
+                    hasModal:
+                      type: boolean
+                      default: false
+
+  /milestone/{id}:
+    get:
+      operationId: getSingleMilestone
+      summary: get Milestone
+      description: get Milestone
+      tags:
+        - Milestone
+      parameters:
+        - name: id
+          in: path
+          description: ID of Milestone to get details
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: get milestone successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  milestoneName:
+                    type: string
+                  photoUrl:
+                    type: string
+                  xp:
+                    type: number
+                  completionTiming:
+                    type: number
+                  hasModal:
+                    type: boolean
+                    default: false
+
+    patch:
+      operationId: updateMilestone
+      summary: Update Milestone
+      description: update Milestone by super admin
+      tags:
+        - Milestone
+      parameters:
+        - name: id
+          in: path
+          description: ID of Milestone to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                milestoneName:
+                  type: string
+                  description: Milestone name to update
+                photoUrl:
+                  type: string
+                  description: milestone photo url to update
+                xp:
+                  type: number
+                  description: milestone Xp to update
+                completionTiming:
+                  type: number
+                  description: milestone completion timing to update
+                hasModal:
+                  type: boolean
+                  default: false
+      responses:
+        "200":
+          description: milestone  updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  milestoneName:
+                    type: string
+                  photoUrl:
+                    type: string
+                  xp:
+                    type: number
+                  completionTiming:
+                    type: number
+                  hasModal:
+                    type: boolean
+                    default: false
+    delete:
+      operationId: deleteMilestone
+      summary: Delete Milestone
+      description: Delete a Milestone by ID
+      tags:
+        - Milestone
+      parameters:
+        - name: id
+          in: path
+          description: ID of Milestone to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Milestone deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /tag:
+    post:
+      operationId: createTag
+      summary: create tag
+      description: create tag
+      tags:
+        - Tag
+      security:
+        - firebaseAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tagText:
+                  type: string
+                  description: tag content
+      responses:
+        "200":
+          description: tag created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tagText:
+                    type: string
+                    description: tag content
+    get:
+      operationId: getAllTags
+      summary: Get All tags
+      description: Get All tags
+      tags:
+        - Tag
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: priority
+          in: query
+          description: priority
+          required: false
+          schema:
+            anyOf:
+              - type: boolean
+              - type: string
+            default: 0
+      responses:
+        "200":
+          description: tags retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    tagText:
+                      type: string
+                      description: tag content
+
+  /event-type:
+    post:
+      operationId: createEventType
+      summary: create net event type by super admin
+      description: create net event type by super admin
+      tags:
+        - EventType
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventTypeName:
+                  type: string
+                  description: eventType name
+      responses:
+        "200":
+          description: Created company account successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventTypeName:
+                    type: string
+                    description: eventType name
+
+    get:
+      operationId: getAllEventType
+      summary: Get All Event types
+      description: Get All Event types
+      tags:
+        - EventType
+      responses:
+        "200":
+          description: EventTypes retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    eventTypeName:
+                      type: string
+                      description: eventType name
+
+  /event-type/{id}:
+    get:
+      operationId: getSingleEventType
+      summary: get Single EventType
+      description: get Single EventType
+      tags:
+        - EventType
+      parameters:
+        - name: id
+          in: path
+          description: ID of EventType to get details
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: EventTypes retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventTypeName:
+                    type: string
+
+    patch:
+      operationId: updateEventType
+      summary: update EventType
+      description: updateEventType
+      tags:
+        - EventType
+      parameters:
+        - name: id
+          in: path
+          description: ID of EventType to get details
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventTypeName:
+                  type: string
+                  description: eventType name
+      responses:
+        "200":
+          description: update EventType successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventTypeName:
+                    type: string
+
+    delete:
+      operationId: deleteEventType
+      summary: Delete EventType
+      description: Delete a EventType by ID
+      tags:
+        - EventType
+      parameters:
+        - name: id
+          in: path
+          description: ID of EventType to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: EventType deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /theme:
+    post:
+      operationId: createTheme
+      summary: create a new theme by super admin
+      description: create a new theme by super admin
+      tags:
+        - Theme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                themeName:
+                  type: string
+                  description: Theme name
+                photoUrl:
+                  type: string
+                  description: photo url of theme
+      responses:
+        "200":
+          description: Created theme successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  themeName:
+                    type: string
+                  photoUrl:
+                    type: string
+
+    get:
+      operationId: getAllThemes
+      summary: Get All Milestones
+      description: Get details of all milestones
+      tags:
+        - Theme
+      responses:
+        "200":
+          description: themes retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    themeName:
+                      type: string
+                    photoUrl:
+                      type: string
+
+  /theme/{id}:
+    get:
+      operationId: getSingleTheme
+      summary: get Theme
+      description: get Theme
+      tags:
+        - Theme
+      parameters:
+        - name: id
+          in: path
+          description: ID of theme to get details
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: theme retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  themeName:
+                    type: string
+                  photoUrl:
+                    type: string
+
+    patch:
+      operationId: updateTheme
+      summary: Update Theme
+      description: update Theme by super admin
+      tags:
+        - Theme
+      parameters:
+        - name: id
+          in: path
+          description: Theme ID to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                themeName:
+                  type: string
+                  description: Theme name
+                photoUrl:
+                  type: string
+                  description: photo url of theme
+      responses:
+        "200":
+          description: Theme updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  themeName:
+                    type: string
+                  photoUrl:
+                    type: string
+
+    delete:
+      operationId: deleteTheme
+      summary: Delete deleteTheme
+      description: Delete Theme by ID
+      tags:
+        - Theme
+      parameters:
+        - name: id
+          in: path
+          description: ID of Theme to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: theme deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /easy:
+    post:
+      operationId: createEasyEvent
+      summary: Easy event
+      description: Create easy event
+      tags:
+        - EasyEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                keyword:
+                  type: string
+                title:
+                  type: string
+                hasMeta:
+                  type: boolean
+
+      responses:
+        "200":
+          description: easy event created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keyword:
+                    type: string
+                  title:
+                    type: string
+                  hasMeta:
+                    type: boolean
+
+    get:
+      operationId: getAllEasyEvent
+      summary: Get all easy event
+      description: Get details of all easy event
+      tags:
+        - EasyEvent
+      responses:
+        "200":
+          description: Easy event retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    keyword:
+                      type: string
+                    title:
+                      type: string
+                    hasMeta:
+                      type: boolean
+  /contact-list:
+    get:
+      operationId: getAllContacts
+      summary: List all contacts
+      description: List all contacts
+      tags:
+        - Contacts
+      parameters:
+        - name: searchTerm
+          in: query
+          description: first or last name
+          required: false
+          schema:
+            type: string
+        - name: currentPage
+          in: query
+          description: Current offset
+          required: false
+          schema:
+            type: number
+            default: 1
+      security:
+        - firebaseAuth: []
+
+      responses:
+        "200":
+          description: List of all contacts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hasNextPage:
+                    type: boolean # New key indicating whether there are more records
+                  contacts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        firstName:
+                          type: string
+                          example: John
+                        lastName:
+                          type: string
+                          example: Doe
+                        email:
+                          type: string
+                          example: john.doe@example.com
+                        phone:
+                          type: string
+                          example: +9321****
+                        createdAt:
+                          type: string
+                          example: Date
+                        updatedAt:
+                          type: string
+                          example: Date
+                        userName:
+                          type: string
+                          example: john.doe
+                        gender:
+                          type: string
+                          example: male
+                        dateOfBirth:
+                          type: string
+                        photoUrl:
+                          type: string
+  /friend-list:
+    get:
+      operationId: getAllFriends
+      summary: Get all friend list
+      description: Get all friend list
+      tags:
+        - Friend
+      parameters:
+        - name: searchTerm
+          in: query
+          description: first or last name
+          required: false
+          schema:
+            type: string
+        - name: currentPage
+          in: query
+          description: Current offset
+          required: false
+          schema:
+            type: number
+            default: 1
+      security:
+        - firebaseAuth: []
+
+      responses:
+        "200":
+          description: Get results of friend list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    firstName:
+                      type: string
+                      example: John
+                    lastName:
+                      type: string
+                      example: Doe
+                    email:
+                      type: string
+                      example: john.doe@example.com
+                    phone:
+                      type: string
+                      example: +9321****
+                    createdAt:
+                      type: string
+                      example: Date
+                    updatedAt:
+                      type: string
+                      example: Date
+                    userName:
+                      type: string
+                      example: john.doe
+                    gender:
+                      type: string
+                      example: male
+                    dateOfBirth:
+                      type: string
+                    photoUrl:
+                      type: string
+                    isFriend:
+                      type: boolean
+  /friend-requests:
+    get:
+      operationId: getAllFriendRequests
+      summary: Get all friend requests
+      description: Get all friend requests
+      tags:
+        - Friend
+      parameters:
+        - name: currentPage
+          in: query
+          description: Current offset
+          required: false
+          schema:
+            type: number
+            default: 1
+      security:
+        - firebaseAuth: []
+
+      responses:
+        "200":
+          description: Get results of friend requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hasNextPage:
+                    type: boolean
+                  friendRequests:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        firstName:
+                          type: string
+                          example: John
+                        lastName:
+                          type: string
+                          example: Doe
+                        email:
+                          type: string
+                          example: john.doe@example.com
+                        phone:
+                          type: string
+                          example: +9321****
+                        createdAt:
+                          type: string
+                          example: Date
+                        updatedAt:
+                          type: string
+                          example: Date
+                        userName:
+                          type: string
+                          example: john.doe
+                        gender:
+                          type: string
+                          example: male
+                        dateOfBirth:
+                          type: string
+                        photoUrl:
+                          type: string
+  /friend-add:
+    post:
+      operationId: createNewFriend
+      summary: Create a new friend
+      description: Create a new friend
+      tags:
+        - Friend
+      security:
+        - firebaseAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                friendId:
+                  type: string
+      responses:
+        "200":
+          description: New friend created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /friend-delete/{id}:
+    delete:
+      operationId: deleteFriend
+      summary: Delete friend
+      description: Delete a Friend by ID
+      tags:
+        - Friend
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of Friend to remove
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Friend deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /friend-response/{id}/{status}/{notificationId}:
+    post:
+      operationId: friendAcceptReject
+      summary: Accept or reject friend request
+      description: Accept or reject friend request
+      tags:
+        - Friend
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Friend id of request to accept or reject
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: path
+          description: accept or reject
+          required: true
+          schema:
+            type: string
+        - name: notificationId
+          in: path
+          description: notification id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Friend request accept or reject successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /user-details/{id}:
+    get:
+      operationId: getContactDetailsById
+      summary: Contact Details
+      description: Contact Details
+      tags:
+        - Contacts
+      security:
+        - firebaseAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of Contact Details
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Get Contact Details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  firstName:
+                    type: string
+                    example: John
+                  lastName:
+                    type: string
+                    example: Doe
+                  email:
+                    type: string
+                    example: john.doe@example.com
+                  phone:
+                    type: string
+                    example: +9321****
+                  createdAt:
+                    type: string
+                    example: Date
+                  updatedAt:
+                    type: string
+                    example: Date
+                  userName:
+                    type: string
+                    example: john.doe
+                  gender:
+                    type: string
+                    example: male
+                  dateOfBirth:
+                    type: string
+                  photoUrl:
+                    type: string
+                  about:
+                    type: string
+                  xp:
+                    type: number
+                  companyId:
+                    type: string
+                  allowPeopleToConnect:
+                    type: boolean
+                    default: false
+                  pushAlerts:
+                    type: boolean
+                    default: false
+                  address:
+                    type: string
+                    default: null
+                  profession:
+                    type: string
+                    default: null
+                  isFriend:
+                    type: boolean
+                    default: null
+  /notifications:
+    get:
+      operationId: getNotification
+      summary: Get all user notification
+      description: Get all user notification
+      tags:
+        - Notification
+      parameters:
+        - name: currentPage
+          in: query
+          description: Current offset
+          required: false
+          schema:
+            type: number
+            default: 1
+      security:
+        - firebaseAuth: []
+
+      responses:
+        "200":
+          description: Get results of user notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hasNextPage:
+                    type: boolean
+                  notifications:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        notifycationType:
+                          type: string
+                          example: Friend Request
+                        notificationText:
+                          type: string
+                          example: You have new friend request
+                        extraInfo:
+                          type: object
+                          example: {}
+                        readStatus:
+                          type: string
+                          example: unread
+                          
+                          
+  /shop:
+    get:
+      operationId: getShop
+      summary: Get all shop
+      description: Get all shops
+      tags:
+        - Shop
+      parameters:
+        - name: searchTerm
+          in: query
+          description: searchTerm
+          required: false
+          schema:
+            type: string
+            default: null
+            
+        - name: currentPage
+          in: query
+          description: Current offset
+          required: false
+          schema:
+            type: number
+            default: 1
+  
+
+      responses:
+        "200":
+          description: Get results of shop
+          content:
+            application/json:
+              schema:
+                type: object
+
+components:
+  schemas:
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ
+        id:
+          type: string
+          example: "1234567890"
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        phone:
+          type: string
+    VerificationResponse:
+      type: object
+      properties:
+        unVerified:
+          type: boolean
+          example: true
+  securitySchemes:
+    firebaseAuth:
+      type: apiKey
+      description: Bearer Authentication
+      name: Authorization
+      in: header
