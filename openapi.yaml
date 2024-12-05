@@ -5,9 +5,9 @@ info:
   description: |
     Social Media Platform
 servers:
-  - url: https://52.214.176.110/api
+  - url: https://localhost:5000/api
 
-    description: Live server
+    description: local server
 tags:
   - name: Authentication
     description: APIs for user authentication
