@@ -5,9 +5,9 @@ import { Boom } from '@hapi/boom';
 const NOT_FOUND = 404;
 const INTERNAL_SERVER_ERROR = 500;
 
-const CONSUMER_KEY = "ck_8a46063ccec7a775947f4800f1fb040dc2a5af7c";
-const CONSUMER_SECRET = "cs_e1227d3a9d8c43d5a8bb483f162c5f741fcb3e1d";
-const url = `https://www.mauritsweebers.com/wp-json/wc/v3/products?consumer_key=${CONSUMER_KEY}&consumer_secret=${CONSUMER_SECRET}`;
+const CONSUMER_KEY = "key";
+const CONSUMER_SECRET = "key";
+const url = url here;
 
 const handler: Handler<"getShop"> = async ({ searchTerm, currentPage=1 }) => {
       try {
